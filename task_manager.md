@@ -64,21 +64,54 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 ## 2. Supabase Integration
 
-### 2.1 Set Up Supabase Project and Tables []
+### 2.1 Set Up Supabase Project and Tables [x]
 
-### 2.2 Configure Supabase Client in Next.js []
+// Tables created and migration applied locally and pushed to remote Supabase.
+// Migration file: supabase/migrations/20250521132120_create_core_tables.sql
 
-### 2.3 Implement Supabase Auth (Sign Up, Login, Logout) []
+### 2.2 Configure Supabase Client in Next.js [x]
 
-### 2.4 Protect Routes for Authenticated Users []
+// Supabase client utility created: src/lib/supabase-client.ts
+// All imports updated to use: ../../lib/supabase-client
 
-### 2.5 Test Auth Flows (Sign Up, Login, Logout, Route Protection) []
+### 2.3 Implement Supabase Auth (Sign Up, Login, Logout) [x]
 
-### 2.6 Unit Tests for Supabase Integration []
+// Auth form: src/components/auth/auth-form.tsx
+// Auth modal: src/components/auth/auth-modal.tsx
+// Toast system: src/components/ui/toaster.tsx, src/components/ui/toast.tsx, src/hooks/use-toast.ts
+// Toaster added to layout: src/app/layout.tsx
+// AuthModal integrated into header: src/components/header-auth.tsx
+// Logout button visible for authenticated users
+// All imports and type issues resolved
 
-### 2.7 Update README.md (if needed) []
+### 2.4 Protect Routes for Authenticated Users [x]
 
-### 2.8 Update CHANGELOG.md (if needed) []
+// Utility for server-side route protection: src/utils/supabase/require-user-or-redirect.ts
+// Example usage in protected page: src/app/protected/page.tsx
+// All protected pages should use this utility for consistent auth checks
+
+### 2.5 Test Auth Flows (Sign Up, Login, Logout, Route Protection) [x]
+
+// Unit tests for AuthForm: src/components/auth/**tests**/auth-form.test.tsx
+// Unit tests for route protection utility: src/utils/supabase/**tests**/require-user-or-redirect.test.ts
+// Tests cover form validation, Supabase logic, and server-side route protection
+
+### 2.6 Unit Tests for Supabase Integration [x]
+
+// Fixed Vitest mocking and hoisting issues for Supabase client and route protection tests.
+// - In `src/components/auth/__tests__/auth-form.test.tsx`, the Supabase client mock is exposed from the vi.mock factory as `mockAuth` and accessed in tests via `(supabaseClient as any).mockAuth`. This ensures the test assertions use the same mock instance as the component under test, avoiding issues where new mock instances are created and not called by the component.
+// - In `src/utils/supabase/__tests__/require-user-or-redirect.test.ts`, the mock is exposed as `_mockAuth` from the vi.mock factory and accessed in tests via `(serverModule as any)._mockAuth`. This avoids all top-level variable hoisting issues and ensures the test always uses the correct mock instance.
+// - These changes resolve errors caused by Vitest's hoisting of vi.mock and the inability to reference or assign top-level variables inside the mock factory. The new pattern is robust for ESM/CJS and path alias environments.
+// - All tests now pass. Use this pattern for future Supabase-related tests.
+// - Files changed: src/components/auth/**tests**/auth-form.test.tsx, src/utils/supabase/**tests**/require-user-or-redirect.test.ts
+
+### 2.7 Update README.md (if needed) [x]
+
+// Updated README.md with a detailed section on Vitest mocking/hoisting issues and the robust pattern for mocking Supabase client/server utilities. See 'Testing Supabase Client and Route Protection Utilities with Vitest'.
+
+### 2.8 Update CHANGELOG.md (if needed) [x]
+
+// Updated CHANGELOG.md with a detailed entry describing the Vitest mocking/hoisting fix, the new pattern, and the files changed.
 
 ### 2.9 Git Commit: Supabase Integration Complete []
 

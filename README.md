@@ -32,6 +32,16 @@
 - Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
   - Environment variables automatically assigned to Vercel project
 
+### ✅ Supabase Auth (Sign Up, Login, Logout)
+
+- Modal-based authentication UI using shadcn/ui Dialog
+- Email/password sign up and login
+- Toast feedback for auth success/error (shadcn/ui)
+- Logout button in header for authenticated users
+- All import paths now use the src/ alias structure for consistency
+- **Server-side route protection utility**: Use `requireUserOrRedirect()` in any protected page for consistent authentication checks
+- **Unit tests for auth flows and route protection**: See `src/components/auth/__tests__/auth-form.test.tsx` and `src/utils/supabase/__tests__/require-user-or-redirect.test.ts`
+
 ## Demo
 
 You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
@@ -137,3 +147,68 @@ Please file feedback and issues over on the [Supabase GitHub org](https://github
   ```sh
   npx vitest run
   ```
+
+## Testing Supabase Client and Route Protection Utilities with Vitest
+
+### Vitest Mocking and Hoisting Issues
+
+When testing modules that import Supabase client or server utilities, Vitest's `vi.mock` is hoisted to the top of the file. This means you cannot reference or assign top-level variables inside the mock factory, or you will get errors like `ReferenceError: Cannot access 'mockAuth' before initialization`.
+
+### Solution: Expose Mocks from the Factory
+
+To reliably mock Supabase client/server utilities and assert against the correct mock instance, use the following pattern:
+
+- **Expose the mock instance from the `vi.mock` factory** as a property (e.g., `mockAuth` or `_mockAuth`).
+- **Access the mock instance in your tests** by casting the imported module as `any` (since the property only exists in the mocked module during tests).
+
+#### Example for Supabase Client (auth-form.test.tsx):
+
+```ts
+vi.mock('@/lib/supabase-client', () => {
+  const mockAuth = {
+    signUp: vi.fn().mockResolvedValue({ error: null }),
+    signInWithPassword: vi.fn().mockResolvedValue({ error: null }),
+  };
+  return {
+    createClient: () => ({ auth: mockAuth }),
+    __esModule: true,
+    mockAuth,
+  };
+});
+
+// In your test assertions:
+expect((supabaseClient as any).mockAuth.signUp).toHaveBeenCalledWith({ ... });
+```
+
+#### Example for Route Protection Utility (require-user-or-redirect.test.ts):
+
+```ts
+vi.mock('../server', () => {
+  const mockAuth = { getUser: vi.fn() };
+  return {
+    createClient: () => ({ auth: mockAuth }),
+    __esModule: true,
+    _mockAuth: mockAuth,
+  };
+});
+
+import * as serverModule from '../server';
+
+// In your test assertions:
+expect((serverModule as any)._mockAuth.getUser).toHaveBeenCalledWith(...);
+```
+
+### Why This Pattern?
+
+- **Avoids hoisting issues:** No top-level variable references inside the mock factory.
+- **Ensures correct mock instance:** The test and the component/module under test use the same mock instance.
+- **Works with ESM/CJS and path aliases:** No require/import path issues.
+
+### Troubleshooting
+
+If you see errors about missing mock calls or hoisting, check that:
+
+- You are not referencing or assigning to variables at the top level inside a `vi.mock` factory.
+- You are exposing the mock instance from the factory and accessing it via the imported module (cast as `any`).
+
+All current tests for Supabase auth and route protection use this pattern and pass reliably.
