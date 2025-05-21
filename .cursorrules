@@ -1,0 +1,125 @@
+# Clause Check Project Documentation
+
+## General Principles
+
+- Go extremely slowly when implementing features.
+- Add detailed code comments to all code.
+- CRITICAL: Do not change the MVP template file structure unless absolutely necessary.
+- Make sure to create all necessary types and interfaces.
+- Make sure to create all necessary tests .
+- Make sure to read all necessary documentation.
+- Make sure to create all necessary README.md files.
+- CRITICAL: If you are unsure about something, ask me for clarification.
+- When you are generating code, refer to context7 MCP.
+- CRITICAL: Before pushing any commit, make sure that I'm not revealing secrets, keys, or other sensitive information.
+- CRITICAL: after we complete a feature, I want to run unit tests with Vitest. When we are done with the MVP, we'll then test using e2e test software like Playwright.
+- In task_manager.md, whenever we're finished with a sub-task, I want you to add comments which have paths to the files that we added/edited, so it's easier to track later.
+- Supabase migrations should be dated with date, hour, minute, second, etc. Essentially, timestamp-based naming convention.
+
+## Project Context
+
+This project is a lightweight MVP called Clause Check.
+
+The primary goal is to validate a full-stack template using Next.js + Supabase + shadcn/ui, covering auth, database, storage, UI, and deploy.
+
+## Code Structure & Style
+
+Use the Next.js App Router file structure. Organize by domain first, not component type.
+
+This is the starting file structure. You can add to it, but do not change the file structure unless absolutely necessary.
+
+```
+/src
+    /app
+    /components
+    /lib
+    /styles
+    /utils
+```
+
+## ⚙️ Tech Stack
+
+- Next.js (App Router, TypeScript)
+- Tailwind CSS + shadcn/ui
+- Supabase (Postgres + Storage + Auth)
+- react-hook-form + zod (Forms/Validation)
+- Lucide Icons
+- Vercel (Deployment)
+- Zustand (state)
+
+## 📛 Naming Conventions
+
+- Files: kebab-case → desk-card.tsx
+- Components: PascalCase → DeskCard
+- Hooks: use prefix → useUser()
+- Types/Interfaces: PascalCase → Desk, Rating
+- Functions/Vars: camelCase → fetchDeskRatings()
+
+## 🧪 Sample Code Style
+
+```tsx
+const DeskCard = ({ desk }: { desk: Desk }) => {
+  return (
+    <Card className="p-4">
+      <Image src={desk.imageUrl} alt="Desk" />
+      <p>{desk.description}</p>
+    </Card>
+  );
+};
+```
+
+Avoid deeply nested state. Keep logic modular.
+
+## 🧵 State Management
+
+- Use React Server Components where possible
+- Use useState, useEffect, useOptimistic minimally
+- Avoid global state unless necessary
+
+## 🎨 UI & Styling
+
+- All UI must use shadcn/ui components
+- Extend only via Tailwind
+- Responsive by default (mobile-first grid/flex layouts)
+- Use Skeleton and Toast for feedback
+
+## 🧹 Syntax & Formatting
+
+- TypeScript required
+- Auto-format with Prettier
+- Inline prop types unless reused
+- Prefer async/await
+
+## 🚀 Performance Optimization
+
+- Prefer RSC (React Server Components)
+- Use cache and Suspense for data fetching
+- Optimize media with next/image
+
+## 🧬 Git Usage
+
+Use Conventional Commits:
+
+```
+feat: add rating logic
+fix: prevent duplicate ratings
+style: clean up desk card styles
+refactor: move auth helpers
+docs: update README
+```
+
+## 📝 Documentation
+
+- All components/functions >20 lines get a top comment
+- Keep instructions.md and README.md updated
+- Create /docs folder for future scale
+
+## 🤖 Cursor-Specific Generation Rules
+
+- ✅ Always use shadcn/ui over raw HTML
+- ✅ Include zod schemas with forms
+- ✅ Prefer RSC where applicable
+- ✅ Keep generated component logic minimal, readable
+- ✅ Suggest Skeleton, Toast, Dialog usage when appropriate
+- ⚠️ Avoid generating mock data unless requested
+- ⚠️ Flag deeply nested logic for extraction

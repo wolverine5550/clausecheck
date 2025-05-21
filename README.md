@@ -102,3 +102,38 @@ Please file feedback and issues over on the [Supabase GitHub org](https://github
 - [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
 - [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
 - [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+
+## Project Setup
+
+1. Install dependencies:
+   ```sh
+   npm install
+   ```
+2. Copy `.env.local` from the template or set up your own environment variables.
+3. Run the development server:
+   ```sh
+   npm run dev
+   ```
+
+## Linting & Formatting
+
+- ESLint config: `.eslintrc.json` (Next.js + TypeScript recommended rules)
+- Prettier config: `.prettierrc`
+- To lint:
+  ```sh
+  npx eslint .
+  ```
+- To format:
+  ```sh
+  npx prettier --write .
+  ```
+
+## Testing
+
+- Unit tests use [Vitest](https://vitest.dev/)
+- Example test: `src/utils/__tests__/setup.test.ts`
+- Tests may be placed next to features or in `__tests__` folders for global/utility tests
+- To run all tests:
+  ```sh
+  npx vitest run
+  ```
