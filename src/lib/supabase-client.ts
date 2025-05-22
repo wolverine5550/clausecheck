@@ -1,4 +1,4 @@
-import { createBrowserClient } from "@supabase/ssr";
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 /**
  * Creates a Supabase client instance for use in the browser.
@@ -9,7 +9,4 @@ import { createBrowserClient } from "@supabase/ssr";
  * @returns {SupabaseClient} A configured Supabase client instance
  */
 export const createClient = () =>
-  createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  ); 
+  createBrowserSupabaseClient(); 

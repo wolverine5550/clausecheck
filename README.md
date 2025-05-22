@@ -212,3 +212,51 @@ If you see errors about missing mock calls or hoisting, check that:
 - You are exposing the mock instance from the factory and accessing it via the imported module (cast as `any`).
 
 All current tests for Supabase auth and route protection use this pattern and pass reliably.
+
+# Clause Check MVP
+
+## Auth & Supabase Setup
+
+- Uses @supabase/auth-helpers-nextjs for all server/client Supabase logic
+- Uses @supabase/auth-helpers-react for SessionContextProvider and useUser (client-only)
+- No usage of @supabase/ssr (deprecated/incompatible)
+- ClientOnlySupabaseProvider pattern keeps root layout as server component
+
+## File Upload Feature
+
+- Upload page and modular upload form using shadcn/ui, react-hook-form, and zod
+- Only allows PDF, DOC, DOCX files, max 10MB
+- Rate limiting: 5 uploads/hour/user (enforced in API route)
+- Files uploaded to private Supabase Storage bucket ('contracts')
+- Metadata stored in contracts table
+- Toast feedback for upload success/error
+
+## Supabase Storage Setup
+
+- Create a private bucket (e.g., 'contracts') in Supabase dashboard
+- Add RLS/storage policies:
+  - INSERT: bucket_id = 'contracts' AND auth.role() = 'authenticated'
+  - SELECT/DELETE: bucket_id = 'contracts' AND auth.role() = 'authenticated' AND storage.objects.owner = auth.uid()
+
+## Environment Variables
+
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+## Troubleshooting (Next.js 15)
+
+- Ensure all Supabase helpers use @supabase/auth-helpers-nextjs/react (no @supabase/ssr)
+- In API routes, use cookies() synchronously for session detection
+- If you see session/cookie parse errors, clear cookies/localStorage and restart dev server
+
+## File/Folder Structure
+
+- src/app/layout.tsx
+- src/components/client-supabase-provider.tsx
+- src/components/upload/contract-upload-form.tsx
+- src/app/upload/page.tsx
+- src/app/api/upload/route.tsx
+- src/lib/supabase-client.ts
+- src/utils/supabase/server.ts
+
+## See CHANGELOG.md for full details

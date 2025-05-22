@@ -1,6 +1,6 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Toast,
   ToastClose,
@@ -8,19 +8,19 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-  type ToastProps,
-} from './toast';
+} from '@/components/ui/toast';
+import type { ToastProps } from '@/components/ui/toast';
 
 // Type for toasts with extra fields
 export type ToastWithExtras = ToastProps & {
   id: string;
-  title?: string;
-  description?: string;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
   action?: React.ReactNode;
 };
 
 export function Toaster() {
-  const { toasts } = useToast() as { toasts: ToastWithExtras[] };
+  const { toasts } = useToast();
 
   return (
     <ToastProvider>

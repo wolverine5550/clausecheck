@@ -18,6 +18,34 @@
 - Unit tests for AuthForm: `src/components/auth/__tests__/auth-form.test.tsx`
 - Unit tests for route protection utility: `src/utils/supabase/__tests__/require-user-or-redirect.test.ts`
 - Tests cover form validation, Supabase logic, and server-side route protection
+- File upload page and modular upload form with shadcn/ui, react-hook-form, and zod validation.
+- Supabase Storage integration for contract uploads (private 'contracts' bucket).
+- Rate limiting (5 uploads/hour/user) in API route.
+- Toast feedback for upload success/error.
+- ClientOnlySupabaseProvider wrapper to keep root layout as server component.
+- RLS/storage policies for contracts bucket.
+
+### Changed
+
+- Integrated SessionContextProvider and useUser from @supabase/auth-helpers-react for client-side auth state.
+- All Supabase client/server utilities now use @supabase/auth-helpers-nextjs (no @supabase/ssr).
+- API route authentication/session handling updated for Next.js 15 (cookies() sync).
+- File input registration fixed for react-hook-form compatibility.
+
+### Removed
+
+- All usage of @supabase/ssr (now deprecated/incompatible with helpers).
+
+### Files Changed
+
+- src/app/layout.tsx
+- src/components/client-supabase-provider.tsx
+- src/components/upload/contract-upload-form.tsx
+- src/app/upload/page.tsx
+- src/app/api/upload/route.ts
+- src/lib/supabase-client.ts
+- src/utils/supabase/server.ts
+- Supabase dashboard: storage bucket and RLS policies
 
 ### Fixed
 

@@ -119,25 +119,73 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 ## 3. File Upload Feature
 
-### 3.1 Create Upload Page and UI (Dropzone, Form) []
+### 3.1 Integrate Supabase Auth Provider and useUser hook in app [x]
 
-### 3.2 Validate File Types and Size []
+// Integrated SessionContextProvider and useUser from @supabase/auth-helpers-react for client-side auth state.
+// Files: src/app/layout.tsx, src/components/client-supabase-provider.tsx, src/components/upload/contract-upload-form.tsx
 
-### 3.3 Enforce Rate Limiting (5 uploads/hour/user) []
+### 3.2 Create ClientOnlySupabaseProvider wrapper to avoid marking root layout as client component [x]
 
-### 3.4 Upload Files to Supabase Storage []
+// Created client-only provider to wrap app content, keeping root layout as server component.
+// Files: src/components/client-supabase-provider.tsx, src/app/layout.tsx
 
-### 3.5 Extract Raw Text from Uploaded Files []
+### 3.3 Create Upload Page and UI (Dropzone, Form) [x]
 
-### 3.6 Error Handling and User Feedback (Alert) []
+// Implemented modular upload form and upload page UI.
+// Files: src/app/upload/page.tsx, src/components/upload/contract-upload-form.tsx
 
-### 3.7 Unit Tests for File Upload Feature []
+### 3.4 Validate File Types and Size [x]
 
-### 3.8 Update README.md (if needed) []
+// File type and size validation implemented in upload form using zod.
+// Files: src/components/upload/contract-upload-form.tsx
 
-### 3.9 Update CHANGELOG.md (if needed) []
+### 3.5 Enforce Rate Limiting (5 uploads/hour/user) [x]
 
-### 3.10 Git Commit: File Upload Feature Complete []
+// Rate limiting implemented in API route and UI feedback added.
+// Files: src/app/api/upload/route.ts, src/components/upload/contract-upload-form.tsx
+// Added toast components: src/components/ui/toast.tsx, src/components/ui/use-toast.ts, src/components/ui/toaster.tsx
+
+### 3.6 Create Supabase Storage Bucket [x]
+
+// Created private 'contracts' bucket in Supabase dashboard for file uploads.
+
+### 3.7 (Optional) Set Supabase Storage Bucket Policies [x]
+
+// RLS/storage policies created for 'contracts' bucket:
+// - INSERT: bucket_id = 'contracts' AND auth.role() = 'authenticated'
+// - SELECT/DELETE: bucket_id = 'contracts' AND auth.role() = 'authenticated' AND storage.objects.owner = auth.uid()
+
+### 3.8 Upload Files to Supabase Storage [x]
+
+// Upload form now sends file as FormData, API route uploads to Supabase Storage and inserts metadata in contracts table.
+// Files: src/components/upload/contract-upload-form.tsx, src/app/api/upload/route.ts
+
+### 3.9 Fix Supabase client/server utilities to use @supabase/auth-helpers-nextjs [x]
+
+// Removed all @supabase/ssr usage, updated all client/server utilities to use @supabase/auth-helpers-nextjs.
+// Files: src/lib/supabase-client.ts, src/utils/supabase/server.ts
+
+### 3.10 Fix file input registration for react-hook-form [x]
+
+// Fixed file input registration to work with react-hook-form, removed conflicting ref usage.
+// Files: src/components/upload/contract-upload-form.tsx
+
+### 3.11 Fix API route authentication/session handling for Next.js 15 [x]
+
+// Updated API route to use cookies() synchronously for Supabase session detection, per Next.js 15 requirements.
+// Files: src/app/api/upload/route.ts
+
+### 3.12 Extract Raw Text from Uploaded Files []
+
+### 3.13 Error Handling and User Feedback (Alert) []
+
+### 3.14 Unit Tests for File Upload Feature []
+
+### 3.15 Update README.md (if needed) []
+
+### 3.16 Update CHANGELOG.md (if needed) []
+
+### 3.17 Git Commit: File Upload Feature Complete []
 
 ---
 
