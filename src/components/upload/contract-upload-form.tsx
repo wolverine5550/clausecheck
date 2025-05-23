@@ -17,6 +17,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { toast } from '../ui/use-toast';
 import { useUser } from '@supabase/auth-helpers-react';
+import { Alert } from '../ui/alert';
 
 // Define allowed file types and max size
 const ALLOWED_TYPES = [
@@ -47,6 +48,16 @@ interface ContractUploadFormProps {
   onError?: (error: Error) => void;
 }
 
+// Type for API response
+interface UploadApiResponse {
+  success?: boolean;
+  message: string;
+  error?: string;
+  warning?: string;
+  fileUrl?: string;
+  extracted?: boolean;
+}
+
 /**
  * ContractUploadForm
  * Modular upload form for contract files (PDF, DOC, DOCX, max 10MB).
@@ -72,8 +83,14 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
   // File input ref for dropzone
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // State for inline warning/alert
+  const [inlineWarning, setInlineWarning] = React.useState<string | null>(null);
+  const [inlineError, setInlineError] = React.useState<string | null>(null);
+
   // Handle form submit
   const onSubmit = async (data: UploadFormValues) => {
+    setInlineWarning(null);
+    setInlineError(null);
     try {
       // Prepare FormData
       const formData = new FormData();
@@ -85,7 +102,7 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
         body: formData,
       });
 
-      const result = await response.json();
+      const result: UploadApiResponse = await response.json();
 
       if (!response.ok) {
         // Handle rate limit error specifically
@@ -95,13 +112,23 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
             title: 'Rate limit exceeded',
             description: result.message,
           });
+        } else if (response.status === 401) {
+          setInlineError('You must be signed in to upload.');
+        } else if (response.status === 400) {
+          setInlineError(result.message || 'No file uploaded.');
         } else {
-          throw new Error(result.error || 'Failed to upload');
+          setInlineError(result.message || result.error || 'Failed to upload.');
         }
+        if (onError) onError(new Error(result.error || result.message || 'Failed to upload'));
         return;
       }
 
-      // Success
+      // Show extraction warning if present
+      if (result.warning) {
+        setInlineWarning(result.warning);
+      }
+
+      // Success toast
       toast({
         title: 'Success',
         description: result.message,
@@ -115,6 +142,7 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
         title: 'Error',
         description: 'Failed to upload contract. Please try again.',
       });
+      setInlineError('Failed to upload contract. Please try again.');
       if (onError) onError(error as Error);
     }
   };
@@ -126,6 +154,18 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+      {/* Inline error alert */}
+      {inlineError && (
+        <Alert variant="destructive" className="mb-2">
+          {inlineError}
+        </Alert>
+      )}
+      {/* Inline warning alert (e.g., extraction warning) */}
+      {inlineWarning && (
+        <Alert variant="warning" className="mb-2">
+          {inlineWarning}
+        </Alert>
+      )}
       {/* Dropzone for file selection */}
       <div
         className="border border-dashed rounded-lg p-8 text-center text-muted-foreground bg-muted cursor-pointer hover:bg-accent transition"

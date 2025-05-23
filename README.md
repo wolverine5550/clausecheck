@@ -213,6 +213,22 @@ If you see errors about missing mock calls or hoisting, check that:
 
 All current tests for Supabase auth and route protection use this pattern and pass reliably.
 
+## Testing Next.js API Route Handlers
+
+**Note:** Next.js API route handlers that use `cookies()` or other request context features cannot be unit tested with Vitest or Jest, as these require a real request context provided only by the Next.js runtime. Attempting to call these handlers in a unit test will result in errors like:
+
+```
+Error: `cookies` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context
+```
+
+**How to handle:**
+
+- Mark or skip these tests in your test files (see `src/app/api/upload/__tests__/route.test.ts`).
+- Cover API route logic with integration or e2e tests (e.g., Playwright, Next.js API integration tests) instead.
+- Document this limitation in the README and CHANGELOG.
+
+This pattern is consistent with the robust mocking and testing approach used elsewhere in this project.
+
 # Clause Check MVP
 
 ## Auth & Supabase Setup
@@ -229,7 +245,23 @@ All current tests for Supabase auth and route protection use this pattern and pa
 - Rate limiting: 5 uploads/hour/user (enforced in API route)
 - Files uploaded to private Supabase Storage bucket ('contracts')
 - Metadata stored in contracts table
-- Toast feedback for upload success/error
+- **All errors (validation, rate limit, extraction, auth, storage, etc.) are surfaced to the user via shadcn/ui Alert and Toast components.**
+- The API always returns a `message` and may return a `warning` for extraction issues.
+- The Alert component (`src/components/ui/alert.tsx`) uses `role="alert"` for accessibility and robust testability.
+
+## Testing File Upload Feature
+
+- UI tests for the upload form and Alert component are implemented using React Testing Library and Vitest.
+- All error and warning feedback is tested using `getByRole('alert')`.
+- API route handler tests are skipped due to Next.js request context limitations (see below).
+- Robust mocking pattern is used for Supabase and UI utilities (see Supabase Integration section).
+
+## Raw Text Extraction
+
+- After upload, the server extracts raw text from PDF and DOCX files using `pdf-parse` and `mammoth`.
+- Extraction logic: `src/lib/utils/extract-raw-text.ts`
+- API route: `src/app/api/upload/route.ts`
+- Extracted text is stored in the `raw_text` column of the `contracts` table for downstream clause extraction and AI analysis.
 
 ## Supabase Storage Setup
 
@@ -260,3 +292,7 @@ All current tests for Supabase auth and route protection use this pattern and pa
 - src/utils/supabase/server.ts
 
 ## See CHANGELOG.md for full details
+
+## Database Schema Changes
+
+- 20240523_add_raw_text_column_contracts.sql: Added `raw_text` column to `contracts` table. This column will store the full extracted text of uploaded contracts for downstream clause extraction and AI analysis.
