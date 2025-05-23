@@ -263,6 +263,28 @@ This pattern is consistent with the robust mocking and testing approach used els
 - API route: `src/app/api/upload/route.ts`
 - Extracted text is stored in the `raw_text` column of the `contracts` table for downstream clause extraction and AI analysis.
 
+## Clause Extraction
+
+- After raw text is extracted from an uploaded contract, the server immediately splits the text into individual clauses using a utility function.
+- **Clause extraction utility:** `src/lib/utils/extractClauses.ts`
+  - Splits text by numbered sections (e.g., '1. ... 2. ...') or by paragraphs (double newlines) as a fallback.
+  - Returns an array of clause objects, each with a `clauseText` property.
+  - Fully unit tested: see `src/lib/utils/__tests__/extractClauses.test.ts`.
+- **API integration:**
+  - The upload API route (`src/app/api/upload/route.ts`) calls the clause extraction utility after raw text extraction.
+  - All extracted clauses are inserted into the Supabase `clauses` table, linked to the uploaded contract.
+  - If clause extraction or DB insert fails, a warning is returned in the API response, but the upload is not blocked.
+- **Supabase `clauses` table schema:**
+  - `id` (uuid, PK), `contract_id` (uuid, FK), `clause_text` (text, required), plus AI analysis fields (nullable for now).
+- **Test coverage:**
+  - Clause extraction logic is robustly unit tested.
+  - API route handler tests are skipped due to Next.js request context limitations (see above).
+  - End-to-end (e2e) tests are recommended for full upload-to-clauses flow.
+- **Limitations & future improvements:**
+  - Current clause splitting is heuristic and may not perfectly match legal clause boundaries.
+  - Future versions may use NLP or more advanced parsing for improved accuracy.
+  - e2e tests (e.g., Playwright) should be added to verify the full backend flow.
+
 ## Supabase Storage Setup
 
 - Create a private bucket (e.g., 'contracts') in Supabase dashboard

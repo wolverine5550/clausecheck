@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { extractRawText } from '@/lib/utils/extract-raw-text';
+import { extractClauses } from '@/lib/utils/extractClauses';
 
 const RATE_LIMIT = 5; // uploads per hour
 const RATE_LIMIT_WINDOW = 60 * 60; // 1 hour in seconds
@@ -104,19 +105,48 @@ export async function POST(request: Request) {
     }
 
     // Insert metadata and raw text into contracts table
-    const { error: dbError } = await supabase.from("contracts").insert({
+    // Use .select() to get the inserted contract's ID
+    const { data: contractInsertData, error: dbError } = await supabase.from("contracts").insert({
       user_id: user.id,
       file_name: (file as File).name,
       file_url: fileUrl,
       uploaded_at: new Date().toISOString(),
       raw_text: rawText,
-    });
-    if (dbError) {
+    }).select();
+    if (dbError || !contractInsertData || !contractInsertData[0]?.id) {
       console.error("DB insert error:", dbError);
       return NextResponse.json(
         { error: "Failed to save contract metadata", message: "Failed to save contract metadata." },
         { status: 500 }
       );
+    }
+    const contractId = contractInsertData[0].id;
+
+    // --- Extract and store clauses if raw text extraction succeeded ---
+    if (rawText) {
+      try {
+        // Use the clause extraction utility
+        const clauses = extractClauses(rawText);
+        if (clauses.length > 0) {
+          // Prepare bulk insert payload for clauses table
+          const clauseRows = clauses.map(c => ({
+            contract_id: contractId,
+            clause_text: c.clauseText,
+            // AI fields left null for now
+          }));
+          const { error: clauseInsertError } = await supabase.from("clauses").insert(clauseRows);
+          if (clauseInsertError) {
+            console.error("Clause insert error:", clauseInsertError);
+            // Do not fail the whole request, but include a warning
+            extractionWarning = (extractionWarning ? extractionWarning + ' ' : '') +
+              'Clause extraction failed to save. Please try again.';
+          }
+        }
+      } catch (clauseErr) {
+        console.error('Clause extraction failed:', clauseErr);
+        extractionWarning = (extractionWarning ? extractionWarning + ' ' : '') +
+          'Clause extraction failed. Please try again.';
+      }
     }
 
     // Always return a message field. If extraction failed, include warning.

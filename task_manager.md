@@ -207,23 +207,35 @@ This document outlines the step-by-step implementation plan for the Clause Check
 // Updated CHANGELOG.md to document Alert accessibility/testing, robust UI test pass, and API route handler test skipping.
 // File: CHANGELOG.md
 
-### 3.17 Git Commit: File Upload Feature Complete []
+### 3.17 Git Commit: File Upload Feature Complete [x]
 
 ---
 
 ## 4. Clause Extraction
 
-### 4.1 Implement Clause Extraction Utility (lib/utils/extractClauses.ts) []
+### 4.1 Implement Clause Extraction Utility (lib/utils/extractClauses.ts) [x]
 
-### 4.2 Parse and Split Uploaded Document into Clauses []
+// Implemented in: src/lib/utils/extractClauses.ts
 
-### 4.3 Store Extracted Clauses (Temp DB or Memory) []
+### 4.2 Parse and Split Uploaded Document into Clauses [x]
 
-### 4.4 Unit Tests for Clause Extraction []
+// Implemented in: src/app/api/upload/route.ts (calls extractClauses after raw text extraction)
 
-### 4.5 Update README.md (if needed) []
+### 4.3 Store Extracted Clauses (Temp DB or Memory) [x]
 
-### 4.6 Update CHANGELOG.md (if needed) []
+// Implemented in: src/app/api/upload/route.ts (inserts into Supabase clauses table)
+
+### 4.4 Unit Tests for Clause Extraction [x]
+
+// Tests: src/lib/utils/**tests**/extractClauses.test.ts
+
+### 4.5 Update README.md (if needed) [x]
+
+// Updated: README.md (documented clause extraction utility, API route integration, and test coverage)
+
+### 4.6 Update CHANGELOG.md (if needed) [x]
+
+// Updated: CHANGELOG.md (documented clause extraction feature, API route changes, and test coverage)
 
 ### 4.7 Git Commit: Clause Extraction Complete []
 

@@ -30,6 +30,13 @@
 - Extraction utility: src/lib/utils/extract-raw-text.ts
 - API route updated: src/app/api/upload/route.ts
 - Added shadcn/ui Alert component for inline feedback (errors, warnings, info): `src/components/ui/alert.tsx`
+- Implemented clause extraction utility: `src/lib/utils/extractClauses.ts` (splits contract text into clauses by numbered section or paragraph; robustly unit tested in `src/lib/utils/__tests__/extractClauses.test.ts`)
+- Upload API route (`src/app/api/upload/route.ts`) now extracts and stores clauses after raw text extraction
+- All extracted clauses are inserted into the Supabase `clauses` table, linked to the uploaded contract
+- If clause extraction or DB insert fails, a warning is returned in the API response, but the upload is not blocked
+- Test coverage: clause extraction utility is unit tested; API route handler tests are skipped due to Next.js request context limitations (see README); e2e tests recommended for full upload-to-clauses flow
+- Updated: README.md and task_manager.md to document clause extraction feature, API route changes, and test coverage
+- Limitation: clause splitting is heuristic; future versions may use NLP or more advanced parsing; e2e tests should be added for full backend flow
 
 ### Changed
 
