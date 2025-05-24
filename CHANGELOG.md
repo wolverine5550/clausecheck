@@ -37,6 +37,12 @@
 - Test coverage: clause extraction utility is unit tested; API route handler tests are skipped due to Next.js request context limitations (see README); e2e tests recommended for full upload-to-clauses flow
 - Updated: README.md and task_manager.md to document clause extraction feature, API route changes, and test coverage
 - Limitation: clause splitting is heuristic; future versions may use NLP or more advanced parsing; e2e tests should be added for full backend flow
+- Database: Removed `risk_level` (text) and added `risk_score` (integer) to `clauses` table for numeric risk scoring. Migration: `supabase/migrations/20240607180000_remove_risk_level_add_risk_score_clauses.sql`.
+- Added OpenAI clause analysis utility for automated risk scoring, explanation, and suggestions for contract clauses using GPT-3.5. Utility: src/lib/utils/openai-clause-analysis.ts, types: src/lib/utils/openai-clause-analysis.types.ts, tests: src/lib/utils/**tests**/openai-clause-analysis.test.ts.
+- Database: Added `analysis_status` (text, default 'pending') to `clauses` table for tracking clause analysis state. Migration: `supabase/migrations/20240607190000_add_analysis_status_to_clauses.sql`.
+- Added API route: POST /api/contracts/[contractId]/analyze. Triggers AI-powered analysis for up to 10 pending clauses of a contract, updates analysis_status, and returns a summary. File: src/app/api/contracts/[contractId]/analyze/route.ts
+- Database: Added `clause_index` (integer) to `clauses` table for tracking original clause order. Migration: `supabase/migrations/20240607200000_add_clause_index_to_clauses.sql`.
+- Clause extraction logic in `src/app/api/upload/route.ts` now stores `clause_index` for each clause, enabling reading order display and queries.
 
 ### Changed
 

@@ -237,25 +237,35 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 // Updated: CHANGELOG.md (documented clause extraction feature, API route changes, and test coverage)
 
-### 4.7 Git Commit: Clause Extraction Complete []
+### 4.7 Git Commit: Clause Extraction Complete [x]
 
 ---
 
 ## 5. AI-Powered Clause Analysis
 
-### 5.1 Integrate OpenAI API []
+### 5.1 Integrate OpenAI API [x]
 
-### 5.2 Send Clauses for Analysis (Risk, Explanation, Suggestion) []
+// See: src/lib/utils/openai-clause-analysis.ts, src/lib/utils/openai-clause-analysis.types.ts
 
-### 5.3 Handle API Failures (Retry, Alert) []
+### 5.2 Send Clauses for Analysis (Risk, Explanation, Suggestion) [x]
 
-### 5.4 Store Analysis Results []
+// See: src/app/api/contracts/[contractId]/analyze/route.ts (triggers analysis for up to 10 pending clauses)
 
-### 5.5 Unit Tests for AI Analysis []
+### 5.3 Handle API Failures (Retry, Alert) [x]
 
-### 5.6 Update README.md (if needed) []
+// See: src/app/api/contracts/[contractId]/analyze/route.ts (sets analysis_status to 'error', returns warnings)
 
-### 5.7 Update CHANGELOG.md (if needed) []
+### 5.4 Store Analysis Results [x]
+
+// See: supabase/migrations/20240607180000_remove_risk_level_add_risk_score_clauses.sql, supabase/migrations/20240607190000_add_analysis_status_to_clauses.sql, src/app/api/contracts/[contractId]/analyze/route.ts
+
+### 5.5 Unit Tests for AI Analysis [x]
+
+// See: src/lib/utils/**tests**/openai-clause-analysis.test.ts
+
+### 5.6 Update README.md (if needed) [x]
+
+### 5.7 Update CHANGELOG.md (if needed) [x]
 
 ### 5.8 Git Commit: AI Analysis Complete []
 
@@ -381,3 +391,20 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 // 20240523_add_raw_text_column_contracts.sql: Added raw_text column to contracts table for storing extracted contract text.
 // Files updated: supabase/migrations/20240523_add_raw_text_column_contracts.sql, src/app/api/upload/route.ts (future use), src/types/Contract (if/when created)
+
+// 20240607_remove_risk_level_add_risk_score_clauses.sql: Removed risk_level column and added risk_score (integer) to clauses table for numeric risk scoring.
+// Files updated: supabase/migrations/20240607180000_remove_risk_level_add_risk_score_clauses.sql, Supabase schema
+
+// Added OpenAI clause analysis utility and types for AI-powered clause analysis.
+// Files added: src/lib/utils/openai-clause-analysis.ts, src/lib/utils/openai-clause-analysis.types.ts, src/lib/utils/**tests**/openai-clause-analysis.test.ts
+
+// 20240607_add_analysis_status_to_clauses.sql: Added analysis_status (text, default 'pending') to clauses table for tracking clause analysis state.
+// Files updated: supabase/migrations/20240607190000_add_analysis_status_to_clauses.sql, Supabase schema
+
+// Added API route to trigger clause analysis for a contract: POST /api/contracts/[contractId]/analyze
+// Analyzes up to 10 pending clauses, updates analysis_status, and returns a summary.
+// File: src/app/api/contracts/[contractId]/analyze/route.ts
+
+// 20240607_add_clause_index_to_clauses.sql: Added clause_index (integer) to clauses table for tracking original clause order.
+// Files updated: supabase/migrations/20240607200000_add_clause_index_to_clauses.sql, src/app/api/upload/route.ts
+// Clause extraction logic now stores clause_index for reading order display and queries.

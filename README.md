@@ -315,6 +315,25 @@ This pattern is consistent with the robust mocking and testing approach used els
 
 ## See CHANGELOG.md for full details
 
-## Database Schema Changes
+## Database Schema Updates
 
-- 20240523_add_raw_text_column_contracts.sql: Added `raw_text` column to `contracts` table. This column will store the full extracted text of uploaded contracts for downstream clause extraction and AI analysis.
+- 2024-06-07: Migration applied to remove `risk_level` (text) and add `risk_score` (integer) to the `clauses` table. This enables numeric risk scoring for AI-powered clause analysis. See `supabase/migrations/20240607180000_remove_risk_level_add_risk_score_clauses.sql`.
+- 2024-06-07: Migration applied to add `analysis_status` (text, default 'pending') to the `clauses` table. This tracks the analysis state for each clause. See `supabase/migrations/20240607190000_add_analysis_status_to_clauses.sql`.
+- 2024-06-07: Migration applied to add `clause_index` (integer) to the `clauses` table. This enables storing and displaying clauses in original document order. See `supabase/migrations/20240607200000_add_clause_index_to_clauses.sql`.
+- Clause extraction logic now stores `clause_index` for each clause, so results can be queried and displayed in reading order.
+
+## AI Clause Analysis
+
+- Added OpenAI clause analysis utility for automated risk scoring, explanation, and suggestions for contract clauses using GPT-3.5.
+- Utility: `src/lib/utils/openai-clause-analysis.ts`
+- Types: `src/lib/utils/openai-clause-analysis.types.ts`
+- Unit tests: `src/lib/utils/__tests__/openai-clause-analysis.test.ts`
+- The utility is fully typed, robustly tested, and does not expose API keys in code.
+
+### API Endpoint: Trigger Clause Analysis
+
+- **POST /api/contracts/[contractId]/analyze**
+  - Triggers AI-powered analysis for up to 10 pending clauses of the specified contract.
+  - Updates each clause with risk_score, explanation, suggestion, and analysis_status.
+  - Returns a summary of successes, failures, and any warnings.
+  - File: `src/app/api/contracts/[contractId]/analyze/route.ts`

@@ -13,7 +13,7 @@ const BUCKET_NAME = "contracts";
 
 export async function POST(request: Request) {
   try {
-    // Use cookies() synchronously for Supabase session detection
+    // Use cookies() synchronously for Supabase session detection (Next.js 15 API routes)
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
@@ -129,9 +129,10 @@ export async function POST(request: Request) {
         const clauses = extractClauses(rawText);
         if (clauses.length > 0) {
           // Prepare bulk insert payload for clauses table
-          const clauseRows = clauses.map(c => ({
+          const clauseRows = clauses.map((c, idx) => ({
             contract_id: contractId,
             clause_text: c.clauseText,
+            clause_index: idx, // Store the original order
             // AI fields left null for now
           }));
           const { error: clauseInsertError } = await supabase.from("clauses").insert(clauseRows);
