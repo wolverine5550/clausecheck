@@ -122,6 +122,20 @@ export async function POST(request: Request) {
     }
     const contractId = contractInsertData[0].id;
 
+    // --- Audit log: record upload action ---
+    // Insert a row into audit_history after successful contract upload
+    const auditLog = {
+      user_id: user.id,
+      contract_id: contractId,
+      action: 'upload',
+      details: {
+        file_name: (file as File).name,
+        file_url: fileUrl,
+      },
+    };
+    // Insert audit log (do not block response on error)
+    await supabase.from('audit_history').insert(auditLog);
+
     // --- Extract and store clauses if raw text extraction succeeded ---
     if (rawText) {
       try {

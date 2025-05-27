@@ -69,6 +69,21 @@ export async function POST(
       }
     }
 
+    // --- Audit log: record analyze action ---
+    // Insert a row into audit_history after successful batch analysis
+    const auditLog = {
+      user_id: user.id,
+      contract_id: contractId,
+      action: 'analyze',
+      details: {
+        analyzed,
+        failed,
+        warnings,
+      },
+    };
+    // Insert audit log (do not block response on error)
+    await supabase.from('audit_history').insert(auditLog);
+
     return NextResponse.json({
       message: `Analysis complete. ${analyzed} succeeded, ${failed} failed.`,
       analyzed,

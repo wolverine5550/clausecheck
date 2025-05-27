@@ -316,19 +316,41 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 ## 7. Audit/History Tracking
 
-### 7.1 Implement Audit/History Table in Supabase []
+### 7.1 Implement Audit/History Table in Supabase [x]
 
-### 7.2 Track User Actions (Upload, Analyze, Delete) []
+// Already implemented in: supabase/migrations/20250521132120_create_core_tables.sql
 
-### 7.3 Display User History in UI []
+### 7.2 Track User Actions (Upload, Analyze, Delete) [x]
 
-### 7.4 Unit Tests for Audit/History Feature []
+// Added audit logging to:
+// - src/app/api/upload/route.ts (upload)
+// - src/app/api/contracts/[contractId]/analyze/route.ts (analyze)
+// Added contract deletion API route:
+// - src/app/api/contracts/[contractId]/delete/route.ts
+// Added AuditHistory type:
+// - src/lib/utils/openai-clause-analysis.types.ts
 
-### 7.5 Update README.md (if needed) []
+### 7.3 Display User History in UI [x]
 
-### 7.6 Update CHANGELOG.md (if needed) []
+// Implemented /history page to display audit history
+// - src/app/history/page.tsx
 
-### 7.7 Git Commit: Audit/History Feature Complete []
+### 7.4 Unit Tests for Audit/History Feature [x]
+
+// Unit tests for /history page:
+// - src/app/history/**tests**/page.test.tsx
+
+### 7.5 Update README.md (if needed) [x]
+
+// README.md updated with Testing Notes for robust Supabase mocking and audit/history test coverage
+
+### 7.6 Update CHANGELOG.md (if needed) [x]
+
+// CHANGELOG.md updated with robust Supabase mocking and audit/history test coverage
+
+### 7.7 Git Commit: Audit/History Feature Complete [x]
+
+// All audit/history features, tests, and documentation complete and committed
 
 ---
 

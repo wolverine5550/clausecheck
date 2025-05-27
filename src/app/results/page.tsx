@@ -20,6 +20,16 @@ import {
   SelectItem,
   SelectValue,
 } from '../../components/ui/select';
+import { Button } from '../../components/ui/button';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '../../components/ui/dialog';
+import { toast } from '../../components/ui/use-toast';
 
 // Types for contract and clause
 interface Contract {
@@ -45,6 +55,8 @@ const ResultsPage = () => {
   const [loadingContracts, setLoadingContracts] = useState(true);
   const [loadingClauses, setLoadingClauses] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Fetch contracts for the authenticated user
   useEffect(() => {
@@ -94,6 +106,44 @@ const ResultsPage = () => {
       });
   }, [selectedContractId]);
 
+  // Delete contract handler
+  const handleDeleteContract = async () => {
+    if (!selectedContractId) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/contracts/${selectedContractId}/delete`, { method: 'POST' });
+      const result = await res.json();
+      if (!res.ok) {
+        toast({
+          variant: 'destructive',
+          title: 'Delete failed',
+          description: result.error || 'Failed to delete contract.',
+        });
+      } else {
+        toast({
+          title: 'Contract deleted',
+          description: result.message,
+        });
+        // Refresh contracts list
+        setContracts((prev) => prev.filter((c) => c.id !== selectedContractId));
+        setSelectedContractId((prev) => {
+          const remaining = contracts.filter((c) => c.id !== prev);
+          return remaining.length > 0 ? remaining[0].id : null;
+        });
+        setClauses([]);
+      }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: 'Delete error',
+        description: 'Could not delete contract. Please try again.',
+      });
+    } finally {
+      setDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
   if (!user) {
     return (
       <main className="max-w-2xl mx-auto py-12 px-4">
@@ -131,6 +181,35 @@ const ResultsPage = () => {
               ))}
             </SelectContent>
           </Select>
+        </div>
+      )}
+      {contracts.length > 0 && selectedContractId && (
+        <div className="mb-4 flex justify-end">
+          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" size="sm" onClick={() => setShowDeleteDialog(true)}>
+                Delete Contract
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Delete Contract</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this contract? This action cannot be undone.
+              </DialogDescription>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteDialog(false)}
+                  disabled={deleting}
+                >
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteContract} disabled={deleting}>
+                  {deleting ? 'Deleting...' : 'Delete'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
       {loadingClauses ? (

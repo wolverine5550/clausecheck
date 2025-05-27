@@ -14,4 +14,18 @@ export interface OpenAIClauseAnalysisResult {
    * Suggestion for improving or mitigating the clause
    */
   suggestion: string;
+}
+
+/**
+ * AuditHistory type for audit/history table rows.
+ * Used for type safety when inserting audit logs.
+ */
+export interface AuditHistory {
+  id?: string;
+  user_id: string;
+  contract_id?: string;
+  clause_id?: string;
+  action: 'upload' | 'analyze' | 'delete';
+  action_at?: string;
+  details?: Record<string, any>;
 } 

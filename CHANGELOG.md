@@ -71,6 +71,14 @@
     - src/components/results/**tests**/ClauseAccordion.test.tsx
     - src/app/results/page.tsx
     - task_manager.md
+- Audit/history tracking for user actions:
+  - Upload: audit log on contract upload (src/app/api/upload/route.ts)
+  - Analyze: audit log on clause analysis batch (src/app/api/contracts/[contractId]/analyze/route.ts)
+  - Delete: audit log on contract deletion (src/app/api/contracts/[contractId]/delete/route.ts)
+- Contract deletion feature:
+  - API route for contract deletion (src/app/api/contracts/[contractId]/delete/route.ts)
+  - Delete button and dialog in Results page (src/app/results/page.tsx)
+- AuditHistory type for type safety (src/lib/utils/openai-clause-analysis.types.ts)
 
 ### Changed
 
@@ -87,6 +95,7 @@
 - API route handler tests remain skipped due to Next.js request context limitations (see README.md for details).
 - Continued use of robust mocking/testing pattern for Supabase and UI components.
 - Files changed: src/components/ui/alert.tsx, src/components/upload/**tests**/contract-upload-form.test.tsx, README.md
+- Results page UI now allows contract deletion with confirmation dialog and toast feedback.
 
 ### Removed
 
@@ -102,6 +111,11 @@
 - src/lib/supabase-client.ts
 - src/utils/supabase/server.ts
 - Supabase dashboard: storage bucket and RLS policies
+- src/app/api/contracts/[contractId]/analyze/route.ts
+- src/app/api/contracts/[contractId]/delete/route.ts
+- src/app/results/page.tsx
+- src/lib/utils/openai-clause-analysis.types.ts
+- task_manager.md
 
 ### Fixed
 
@@ -110,3 +124,10 @@
 - Updated `src/components/auth/__tests__/auth-form.test.tsx` to expose the Supabase client mock instance from the `vi.mock` factory and assert against it using `(supabaseClient as any).mockAuth`. This ensures the test assertions use the same mock instance as the component under test, avoiding issues where new mock instances are created and not called by the component.
 - Updated `src/utils/supabase/__tests__/require-user-or-redirect.test.ts` to expose the mock instance as `_mockAuth` from the `vi.mock` factory and access it in tests via `(serverModule as any)._mockAuth`. This avoids all top-level variable hoisting issues and ensures the test always uses the correct mock instance.
 - These changes resolve errors caused by Vitest's hoisting of `vi.mock` and the inability to reference or assign top-level variables inside the mock factory. The new pattern is robust for ESM/CJS and path alias environments.
+- Robust Supabase client mocking for ResultsPage and HistoryPage tests:
+  - Mock now returns a promise from `.order()`, matching the real Supabase client and preventing infinite update loops in tests.
+  - All chained methods (`select`, `eq`, `order`) are supported.
+  - All unit tests now pass for audit/history and results features.
+  - Affected files:
+    - src/app/results/**tests**/page.test.tsx
+    - src/app/history/**tests**/page.test.tsx

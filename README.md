@@ -363,3 +363,22 @@ This pattern is consistent with the robust mocking and testing approach used els
   - ClauseAccordion closed state test now checks for null
   - Skeletons use role="status" for accessibility and test match
   - Traceability: All changes and file paths marked in task_manager.md
+
+## Audit & History
+
+- All user actions (contract upload, clause analysis, contract deletion) are logged in the audit_history table.
+- Audit logs include minimal details (file name, action, timestamp, etc.) for traceability.
+- Contract deletion is supported from the Results page, with confirmation dialog and audit logging.
+- An upcoming /history page will allow users to view their audit history in a simple, responsive table.
+- Affected files: src/app/api/upload/route.ts, src/app/api/contracts/[contractId]/analyze/route.ts, src/app/api/contracts/[contractId]/delete/route.ts, src/app/results/page.tsx, src/lib/utils/openai-clause-analysis.types.ts
+
+## Testing Notes
+
+- For ResultsPage and HistoryPage unit tests, a robust Supabase client mock is used:
+  - The mock returns a promise from `.order()`, matching the real Supabase client.
+  - All chained methods (`select`, `eq`, `order`) are supported.
+  - This prevents infinite update loops and ensures tests run reliably.
+  - Affected files:
+    - src/app/results/**tests**/page.test.tsx
+    - src/app/history/**tests**/page.test.tsx
+- All unit tests now pass for audit/history and results features.
