@@ -56,6 +56,7 @@ interface UploadApiResponse {
   warning?: string;
   fileUrl?: string;
   extracted?: boolean;
+  contractId?: string;
 }
 
 /**
@@ -133,6 +134,35 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
         title: 'Success',
         description: result.message,
       });
+      // Automatically trigger clause analysis for the new contract
+      const contractId = result.contractId || (result.fileUrl && contractIdFromUrl(result.fileUrl));
+      if (result.success && contractId) {
+        try {
+          toast({ title: 'Analyzing clauses...', description: 'AI analysis in progress.' });
+          const analysisRes = await fetch(`/api/contracts/${contractId}/analyze`, {
+            method: 'POST',
+          });
+          const analysisResult = await analysisRes.json();
+          if (!analysisRes.ok) {
+            toast({
+              variant: 'destructive',
+              title: 'Analysis failed',
+              description: analysisResult.error || 'Failed to analyze clauses.',
+            });
+          } else {
+            toast({
+              title: 'Analysis complete',
+              description: analysisResult.message,
+            });
+          }
+        } catch (err) {
+          toast({
+            variant: 'destructive',
+            title: 'Analysis error',
+            description: 'Could not analyze clauses. Please try again.',
+          });
+        }
+      }
       reset();
       if (onSuccess) onSuccess(result);
     } catch (error) {
@@ -195,3 +225,12 @@ export const ContractUploadForm: React.FC<ContractUploadFormProps> = ({ onSucces
     </form>
   );
 };
+
+// Helper to extract contractId from fileUrl (assuming /[userId]/[contractId].ext)
+function contractIdFromUrl(fileUrl: string): string | null {
+  // Try to extract contractId from the fileUrl or response if available
+  // If fileUrl is a signed/public URL, parse the path
+  // Example: https://.../userId/contractId.ext
+  const match = fileUrl.match(/([0-9a-fA-F-]{36})/);
+  return match ? match[1] : null;
+}

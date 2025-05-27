@@ -267,29 +267,50 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 ### 5.7 Update CHANGELOG.md (if needed) [x]
 
-### 5.8 Git Commit: AI Analysis Complete []
+### 5.8 Git Commit: AI Analysis Complete [x]
 
 ---
 
 ## 6. Results Display
 
-### 6.1 Create Results Page and UI (Card, Badge, Accordion, CopyButton) []
+### 6.1 Create Results Page and UI (Card, Badge, Accordion, CopyButton) [x]
 
-### 6.2 Render Color-Coded Clause Cards []
+// Files: src/app/results/page.tsx, src/components/results/ClauseCard.tsx, src/components/results/ClauseAccordion.tsx, src/components/results/CopyButton.tsx
 
-### 6.3 Show AI Suggestions and Allow Copying []
+### 6.2 Render Color-Coded Clause Cards [x]
 
-### 6.4 Responsive and Accessible UI []
+// Files: src/components/results/ClauseCard.tsx
 
-### 6.5 Unit Tests for Results Display []
+### 6.3 Show AI Suggestions and Allow Copying [x]
 
-### 6.6 Performance and Accessibility Audit []
+// Files: src/components/results/ClauseAccordion.tsx, src/components/results/CopyButton.tsx
 
-### 6.7 Update README.md (if needed) []
+### 6.4 Responsive and Accessible UI [x]
 
-### 6.8 Update CHANGELOG.md (if needed) []
+// Files: src/components/results/ClauseCard.tsx, src/components/results/ClauseAccordion.tsx, src/components/results/CopyButton.tsx
 
-### 6.9 Git Commit: Results Display Complete []
+### 6.5 Unit Tests for Results Display [x]
+
+// [x] Fixed use-toast mocking and test reliability in CopyButton.test.tsx (src/components/results/**tests**/CopyButton.test.tsx)
+// [x] Fixed ClauseAccordion closed state test (src/components/results/**tests**/ClauseAccordion.test.tsx)
+// [x] Added role="status" to Skeletons for accessibility and test match (src/app/results/page.tsx)
+// [x] All Results Display unit tests now pass
+
+### 6.6 Performance and Accessibility Audit [x]
+
+// [x] Results Display performance and accessibility reviewed. All interactive elements use shadcn/ui, role attributes, and are tested for keyboard/screen reader access. See src/app/results/page.tsx, src/components/results/ClauseCard.tsx, src/components/results/ClauseAccordion.tsx, src/components/results/CopyButton.tsx
+
+### 6.7 Update README.md [x]
+
+// [x] README.md updated to document Results Display accessibility, test reliability, and traceability improvements. See README.md
+
+### 6.8 Update CHANGELOG.md [x]
+
+// [x] CHANGELOG.md updated with Results Display test, accessibility, and traceability improvements. See CHANGELOG.md
+
+### 6.9 Git Commit: Results Display Complete [x]
+
+// [x] All Results Display features, tests, and documentation complete and committed.
 
 ---
 

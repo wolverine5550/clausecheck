@@ -157,6 +157,7 @@ export async function POST(request: Request) {
         ? "File uploaded and text extracted successfully."
         : "File uploaded, but text extraction failed.",
       fileUrl,
+      contractId,
       extracted: !!rawText,
       warning: extractionWarning || undefined,
     });

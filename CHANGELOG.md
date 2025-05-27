@@ -43,6 +43,34 @@
 - Added API route: POST /api/contracts/[contractId]/analyze. Triggers AI-powered analysis for up to 10 pending clauses of a contract, updates analysis_status, and returns a summary. File: src/app/api/contracts/[contractId]/analyze/route.ts
 - Database: Added `clause_index` (integer) to `clauses` table for tracking original clause order. Migration: `supabase/migrations/20240607200000_add_clause_index_to_clauses.sql`.
 - Clause extraction logic in `src/app/api/upload/route.ts` now stores `clause_index` for each clause, enabling reading order display and queries.
+- Results Display feature:
+  - /results page for displaying analyzed contract clauses
+  - ClauseCard, ClauseAccordion, CopyButton components
+  - Color-coded risk badge (green/yellow/red) using shadcn/ui
+  - Accordion for AI explanation and suggestion
+  - CopyButton for copying suggestions
+  - Accessibility improvements (keyboard, screen reader, role attributes)
+  - Full unit test coverage for all new components and page
+- Files:
+  - src/app/results/page.tsx
+  - src/components/results/ClauseCard.tsx
+  - src/components/results/ClauseAccordion.tsx
+  - src/components/results/CopyButton.tsx
+  - src/components/results/**tests**/ClauseCard.test.tsx
+  - src/components/results/**tests**/ClauseAccordion.test.tsx
+  - src/components/results/**tests**/CopyButton.test.tsx
+  - src/app/results/**tests**/page.test.tsx
+- Results Display test and accessibility improvements:
+  - Fixed mocking and test reliability for useToast in CopyButton tests
+  - Fixed ClauseAccordion closed state test to check for null
+  - Added role="status" to Skeletons for accessibility and test match
+  - All Results Display unit tests now pass
+  - Traceability: All changes and file paths marked in task_manager.md
+  - Affected files:
+    - src/components/results/**tests**/CopyButton.test.tsx
+    - src/components/results/**tests**/ClauseAccordion.test.tsx
+    - src/app/results/page.tsx
+    - task_manager.md
 
 ### Changed
 

@@ -337,3 +337,29 @@ This pattern is consistent with the robust mocking and testing approach used els
   - Updates each clause with risk_score, explanation, suggestion, and analysis_status.
   - Returns a summary of successes, failures, and any warnings.
   - File: `src/app/api/contracts/[contractId]/analyze/route.ts`
+
+## Results Display
+
+- The /results page displays all analyzed clauses for a contract in a scrollable, responsive list.
+- Each clause is rendered as a Card (ClauseCard) with:
+  - Clause text
+  - Color-coded risk badge (based on risk_score: green/yellow/red)
+  - Accordion for AI explanation and suggestion
+  - CopyButton to copy the AI suggestion
+- Uses shadcn/ui Card, Badge, Accordion, Button, and Skeleton components for UI consistency and accessibility.
+- All interactive elements are accessible (keyboard, screen reader, role attributes).
+- **Skeleton components now use `role="status"` for accessibility and robust testability.**
+- **CopyButton tests use robust mocking for shadcn/ui hooks (useToast) to ensure test reliability.**
+- **ClauseAccordion closed state test now checks for null, matching the actual DOM.**
+- Fully unit tested: see src/components/results/**tests** and src/app/results/**tests**.
+- Performance and accessibility are audited as part of the Results Display feature.
+- **Traceability:** All Results Display changes and file paths are marked in `task_manager.md` for easy tracking.
+
+## Testing
+
+- **Results Display tests:**
+  - All Results Display unit tests now pass (see src/components/results/**tests** and src/app/results/**tests**)
+  - useToast mocking and test reliability fixed in CopyButton tests
+  - ClauseAccordion closed state test now checks for null
+  - Skeletons use role="status" for accessibility and test match
+  - Traceability: All changes and file paths marked in task_manager.md

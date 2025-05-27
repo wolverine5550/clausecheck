@@ -8,7 +8,7 @@ const CLAUSE_ANALYSIS_LIMIT = 10;
 
 export async function POST(
   req: Request,
-  { params }: { params: { contractId: string } }
+  context: { params: { contractId: string } }
 ) {
   try {
     // Authenticate user
@@ -19,7 +19,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const contractId = params.contractId;
+    const contractId = context.params.contractId;
     if (!contractId) {
       return NextResponse.json({ error: "Missing contractId" }, { status: 400 });
     }
