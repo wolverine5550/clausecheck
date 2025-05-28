@@ -394,15 +394,29 @@ This document outlines the step-by-step implementation plan for the Clause Check
 
 ## 9. Demo Mode for Unauthenticated Users
 
-### 9.1 Create Demo Page with Sample Contract and Analysis []
+### 9.1 Create Demo Page with Sample Contract and Analysis [x]
 
-### 9.2 Restrict Upload/Analyze to Authenticated Users []
+// Created: src/app/demo/page.tsx
+// Reused: src/components/results/ClauseCard.tsx, src/components/results/ClauseAccordion.tsx
+// All UI uses shadcn/ui components. Sample contract and analysis are hardcoded for demo.
 
-### 9.3 Unit Tests for Demo Mode []
+### 9.2 Restrict Upload/Analyze to Authenticated Users [x]
 
-### 9.4 Update README.md (if needed) []
+// Edited: src/app/upload/page.tsx
+// Unauthenticated users see an alert and links to /demo and login. ContractUploadForm is only shown to authenticated users.
 
-### 9.5 Update CHANGELOG.md (if needed) []
+### 9.3 Unit Tests for Demo Mode [x]
+
+// Created: src/app/demo/**tests**/page.test.tsx
+// Tests: Demo alert, heading, sample contract card, ClauseCards, CTA button, accessibility.
+
+### 9.4 Update README.md (if needed) [x]
+
+// Updated: README.md (Demo Mode section, features, and unauthenticated user experience)
+
+### 9.5 Update CHANGELOG.md (if needed) [x]
+
+// Updated: CHANGELOG.md (Demo Mode, upload restriction, file paths)
 
 ### 9.6 Git Commit: Demo Mode Complete []
 

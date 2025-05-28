@@ -19,6 +19,7 @@
 
 ## Features
 
+- Demo Mode for unauthenticated users: preview contract analysis at `/demo`
 - Works across the entire [Next.js](https://nextjs.org) stack
   - App Router
   - Pages Router
@@ -41,6 +42,18 @@
 - All import paths now use the src/ alias structure for consistency
 - **Server-side route protection utility**: Use `requireUserOrRedirect()` in any protected page for consistent authentication checks
 - **Unit tests for auth flows and route protection**: See `src/components/auth/__tests__/auth-form.test.tsx` and `src/utils/supabase/__tests__/require-user-or-redirect.test.ts`
+
+### ✅ Demo Mode for Unauthenticated Users
+
+- Unauthenticated users can access a Demo page (`/demo`) to preview Clause Check features.
+- The Demo page displays a sample contract and AI-powered clause analysis using the same UI as the real app.
+- Uploading and analyzing your own contracts requires signing up or logging in.
+- All demo data is hardcoded and does not use real user data or API calls.
+
+> **Demo Mode is now complete.**
+>
+> - All demo features, upload restrictions, tests, and documentation are implemented and passing.
+> - Main files: src/app/demo/page.tsx, src/app/demo/**tests**/page.test.tsx, src/app/upload/page.tsx, README.md, task_manager.md, CHANGELOG.md
 
 ## Demo
 

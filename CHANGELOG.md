@@ -85,6 +85,10 @@
   - All deletions are protected by RLS and server-side checks to ensure only the data owner can delete their data.
   - README.md updated with data retention and deletion policy section.
 - README.md now documents the required RLS policy for secure contract deletion, including a sample SQL policy. This is part of the security review for data retention and deletion.
+- Added Demo Mode: unauthenticated users can access /demo to preview Clause Check with a sample contract and AI clause analysis.
+- Uploading and analyzing real contracts now requires login; unauthenticated users see an alert and links to /demo and login on the upload page.
+- Created src/app/demo/page.tsx and src/app/demo/**tests**/page.test.tsx.
+- Updated README.md and task_manager.md for demo mode and restrictions.
 
 ### Changed
 
@@ -138,3 +142,8 @@
     - src/app/results/**tests**/page.test.tsx
     - src/app/history/**tests**/page.test.tsx
 - Fixed: Updated history page delete test to remove toast assertion from unit test. Toast rendering is now deferred to e2e/integration tests for robustness. All unit tests now pass. See: src/app/history/**tests**/page.test.tsx
+
+### 9.6 Git Commit: Demo Mode Complete [x]
+
+// Demo Mode feature complete: src/app/demo/page.tsx, src/app/demo/**tests**/page.test.tsx, src/app/upload/page.tsx, README.md, task_manager.md, CHANGELOG.md
+// All demo mode features, restrictions, tests, and documentation are complete and committed.
