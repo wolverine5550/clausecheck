@@ -382,3 +382,44 @@ This pattern is consistent with the robust mocking and testing approach used els
     - src/app/results/**tests**/page.test.tsx
     - src/app/history/**tests**/page.test.tsx
 - All unit tests now pass for audit/history and results features.
+- For delete actions (e.g., contract deletion on Results and History pages), toast rendering is **not** asserted in unit tests. This is because toasts may be rendered in portals or split across nodes, making them unreliable to assert in unit tests. Instead, toast feedback is covered in e2e/integration tests. See: src/app/history/**tests**/page.test.tsx for the robust pattern.
+
+## Data Retention & Deletion Policy
+
+### 30-Day Automatic Data Expiry
+
+- All uploaded contracts, extracted clauses, audit history, and associated storage objects are automatically deleted 30 days after upload.
+- This is enforced by a scheduled Supabase Edge Function (`delete_expired_data`) that runs daily and removes all user data older than 30 days.
+- The function deletes:
+  - Contracts (from the `contracts` table)
+  - All related clauses and audit history (via ON DELETE CASCADE)
+  - The associated file from Supabase Storage (`contracts` bucket)
+- No user data is retained beyond 30 days for privacy and compliance.
+
+### User-Initiated Deletion
+
+- Users can delete their own uploads and results at any time from both the Results and History pages.
+- Deletion requires confirmation via a dialog to prevent accidental loss.
+- When a contract is deleted, all related clauses, audit history, and the storage object are also deleted.
+- Only the owner of the contract can perform deletion; all permissions are enforced server-side.
+
+### Security
+
+- All deletion operations are protected by Row Level Security (RLS) and server-side checks to ensure only the data owner can delete their data.
+- **IMPORTANT:** RLS must be enabled on the `contracts` table. Only allow `DELETE` where `user_id = auth.uid()`. Example policy:
+
+  ```sql
+  -- Enable RLS
+  ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
+  -- Policy: Only allow contract owner to delete
+  CREATE POLICY "Allow owner delete" ON contracts
+    FOR DELETE USING (user_id = auth.uid());
+  ```
+
+- No secrets or sensitive data are exposed in the client or logs.
+
+### Implementation Details
+
+- See `supabase/functions/delete_expired_data/index.ts` for the edge function code.
+- See API route: `src/app/api/contracts/[contractId]/delete/route.ts` for user-initiated deletion logic.
+- All related UI and logic are covered by unit tests.
