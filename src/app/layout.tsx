@@ -9,10 +9,13 @@ import Link from 'next/link';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import ClientOnlySupabaseProvider from '@/components/client-supabase-provider';
+import { useUser } from '@supabase/auth-helpers-react';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000';
+
+const ADMIN_EMAIL = 'apascar@gmail.com'; // TODO: Replace with your admin email
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
@@ -30,6 +33,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get the current user (client-side only)
+  const user = typeof window !== 'undefined' ? useUser() : null;
+
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
@@ -49,6 +55,15 @@ export default function RootLayout({
                       <Link href={'/history'} className="hover:underline text-muted-foreground">
                         History
                       </Link>
+                      {/* Admin-only analytics link (visible only to admin) */}
+                      {user?.email === ADMIN_EMAIL && (
+                        <Link
+                          href={'/admin/analytics'}
+                          className="hover:underline text-muted-foreground"
+                        >
+                          Analytics
+                        </Link>
+                      )}
                       <div className="flex items-center gap-2">
                         <DeployButton />
                       </div>

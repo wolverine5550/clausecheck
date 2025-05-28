@@ -20,6 +20,7 @@
 ## Features
 
 - Demo Mode for unauthenticated users: preview contract analysis at `/demo`
+- Admin-only analytics dashboard at `/admin/analytics`: Track user activity (uploads, analyses, deletes) using the audit_history table. Access is restricted to the admin email for MVP. Fully tested with Vitest (see src/app/admin/analytics/**tests**/page.test.tsx).
 - Works across the entire [Next.js](https://nextjs.org) stack
   - App Router
   - Pages Router
@@ -137,6 +138,7 @@ Please file feedback and issues over on the [Supabase GitHub org](https://github
    ```sh
    npm run dev
    ```
+4. To view analytics, log in as the admin email (see src/app/admin/analytics/page.tsx) and visit `/admin/analytics`.
 
 ## Linting & Formatting
 

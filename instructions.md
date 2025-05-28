@@ -56,6 +56,8 @@ Analytics/Monitoring
 
 Supabase logs, Sentry, or similar
 
+- MVP: Admin-only analytics dashboard at `/admin/analytics` tracks user activity (uploads, analyses, deletes) from the audit_history table. Access is restricted to the admin email for MVP. Raw Supabase logs are not exposed in the UI for security reasons.
+
 🤩 Core Features
 
 1. Contract Upload

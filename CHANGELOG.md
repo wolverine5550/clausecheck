@@ -89,6 +89,8 @@
 - Uploading and analyzing real contracts now requires login; unauthenticated users see an alert and links to /demo and login on the upload page.
 - Created src/app/demo/page.tsx and src/app/demo/**tests**/page.test.tsx.
 - Updated README.md and task_manager.md for demo mode and restrictions.
+- Admin-only analytics dashboard at `/admin/analytics`: Tracks user activity (uploads, analyses, deletes) using the audit_history table. Access is restricted to the admin email for MVP.
+- Files: src/app/admin/analytics/page.tsx, src/app/admin/analytics/**tests**/page.test.tsx
 
 ### Changed
 
@@ -142,6 +144,8 @@
     - src/app/results/**tests**/page.test.tsx
     - src/app/history/**tests**/page.test.tsx
 - Fixed: Updated history page delete test to remove toast assertion from unit test. Toast rendering is now deferred to e2e/integration tests for robustness. All unit tests now pass. See: src/app/history/**tests**/page.test.tsx
+- All analytics dashboard tests now pass after syncing ADMIN_EMAIL in test and component. See: src/app/admin/analytics/**tests**/page.test.tsx, src/app/admin/analytics/page.tsx
+- Analytics dashboard is now fully tested and robust.
 
 ### 9.6 Git Commit: Demo Mode Complete [x]
 
